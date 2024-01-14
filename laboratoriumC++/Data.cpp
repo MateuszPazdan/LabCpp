@@ -62,3 +62,16 @@ int Data::Porownaj(const Data& wzor) const
 	else return 1;
 }
 
+std::ostream& operator<<(std::ostream& wy, const Data& d)
+{
+	wy << d.Dzien() << " " << d.Miesiac() << " " << d.Rok();
+	return wy;
+}
+
+std::istream& operator>>(std::istream& we, Data& d)
+{
+	int dzien, miesiac, rok;
+	we >> dzien >> miesiac >> rok;
+	d.Ustaw(dzien, miesiac, rok);
+	return we;
+}

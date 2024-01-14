@@ -19,13 +19,6 @@ Napis::~Napis()
 	delete m_pszNapis;
 }
 
-Napis& Napis::operator=(const Napis& wzor)
-{
-	this->~Napis();
-	new (this) Napis(wzor);
-	return *this;
-}
-
 const char* Napis::Zwroc() const
 {
 	return this->m_pszNapis;
@@ -46,12 +39,40 @@ void Napis::Wypisz() const
 
 void Napis::Wpisz()
 {
+	std::cin.ignore();
 	char buffer[40];
-	std::cin >> buffer;
+	//std::cin >> buffer;
+	std::cin.getline(buffer, sizeof(buffer));
 	this->Ustaw(buffer);
 }
 
 int Napis::SprawdzNapis(const char* por_napis) const
 {
 	return strcmp(m_pszNapis, por_napis);
+}
+
+Napis& Napis::operator=(const Napis& wzor)
+{
+	this->~Napis();
+	new (this) Napis(wzor);
+	return *this;
+}
+
+bool Napis::operator==(const Napis& wzor) const
+{
+	return SprawdzNapis(wzor.m_pszNapis) == 0;
+}
+
+std::ostream& operator<<(std::ostream& wy, const Napis& p)
+{	
+	wy << p.m_pszNapis;
+	return wy;
+}
+
+std::istream& operator>>(std::istream& we, Napis& p)
+{
+	char buffer[40];
+	we >> buffer;
+	p.Ustaw(buffer);
+	return we;
 }

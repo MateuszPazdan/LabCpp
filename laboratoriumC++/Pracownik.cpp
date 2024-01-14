@@ -3,7 +3,7 @@
 
 int Pracownik::ID = 0;
 
-Pracownik::Pracownik(const char* im, const char* naz, int dzien, int miesiac, int rok) : m_pNastepny(nullptr), m_nIDZatrudnienia(ID++), m_DataUrodzenia(*(new Data(dzien,miesiac,rok)))
+Pracownik::Pracownik(const char* im, const char* naz, int dzien, int miesiac, int rok) : m_pNastepny(nullptr), m_nIDZatrudnienia(++ID), m_DataUrodzenia(*(new Data(dzien,miesiac,rok)))
 {
 	this->m_Imie.Ustaw(im);
 	this->m_Nazwisko.Ustaw(naz);
@@ -20,6 +20,8 @@ const char* Pracownik::Imie() const
 	return m_Imie.Zwroc();
 }
 
+
+
 const char* Pracownik::Nazwisko() const
 {
 	return m_Nazwisko.Zwroc();
@@ -30,6 +32,23 @@ Pracownik& Pracownik::operator=(const Pracownik& wzor)
 	this->~Pracownik();
 	new (this) Pracownik(wzor);
 	return *this;
+}
+
+bool Pracownik::operator==(const Pracownik& wzor) const
+{
+	if (this->Porownaj(wzor) == 0) return true;
+	return false;
+}
+
+void Pracownik::WypiszDane()
+{
+	Wypisz();
+	//std::cout << "ID:" << m_nIDZatrudnienia << std::endl;
+}
+
+Pracownik* Pracownik::KopiaObiektu() const
+{
+	return new Pracownik(*this);
 }
 
 void Pracownik::Imie(const char* nowe_imie)
@@ -54,17 +73,17 @@ void Pracownik::Wypisz() const
 	m_Nazwisko.Wypisz();
 	std::cout << " ";
 	m_DataUrodzenia.Wypisz();
-	std::cout << '\n';
+	std::cout << " ";
 }
 
 void Pracownik::Wpisz()
 {
 	std::cout << "Imie: ";
-	m_Imie.Wpisz();
+	std::cin >> m_Imie;
 	std::cout << "Nazwisko: ";
-	m_Nazwisko.Wpisz();
+	std::cin >> m_Nazwisko;
 	std::cout << "Data urodzenia: ";
-	m_DataUrodzenia.Wpisz();
+	std::cin >> m_DataUrodzenia;
 }
 
 int Pracownik::SprawdzImie(const char* por_imie) const
@@ -85,4 +104,14 @@ int Pracownik::Porownaj(const Pracownik& wzorzec) const
 	else return 0;
 }
 
+std::ostream& operator<<(std::ostream& wy, const Pracownik& p)
+{
+	wy << p.m_Imie << " " << p.m_Nazwisko << " " << p.m_DataUrodzenia;
+	return wy;
+}
 
+std::istream& operator>>(std::istream& we, Pracownik& p)
+{   
+	we >> p.m_Imie >> p.m_Nazwisko >> p.m_DataUrodzenia;
+	return we;
+}

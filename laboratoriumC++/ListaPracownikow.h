@@ -1,5 +1,6 @@
 #pragma once
 #include "Pracownik.h"
+#include "Kierownik.h"
 class ListaPracownikow
 {
 private:
@@ -13,6 +14,7 @@ public:
 	void Usun(const Pracownik& wzorzec);
 	void WypiszPracownikow() const;
 	const Pracownik* Szukaj(const char* nazwisko, const char* imie) const;
-
+	void ZapiszDoPliku(const char* nazwaPliku) const;
+	void OdczytZPliku(const char* nazwaPliku);
 };
 

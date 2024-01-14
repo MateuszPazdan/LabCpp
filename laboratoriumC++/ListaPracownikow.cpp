@@ -1,4 +1,8 @@
 #include "ListaPracownikow.h"
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <sstream>
 
 ListaPracownikow::ListaPracownikow() : m_pPoczatek(nullptr) {
 	this->m_nLiczbaPracownikow = 0;
@@ -24,13 +28,13 @@ void ListaPracownikow::Dodaj(const Pracownik& p)
 {
     if (!m_pPoczatek)
     {
-        m_pPoczatek = new Pracownik(p);
+        m_pPoczatek = p.KopiaObiektu();
         m_nLiczbaPracownikow = 1;
         return;
     }
     if (p.Porownaj(*m_pPoczatek) < 0)
     {
-        Pracownik* nowyPracownik = new Pracownik(p);
+        Pracownik* nowyPracownik = p.KopiaObiektu();
         nowyPracownik->m_pNastepny = m_pPoczatek;
         m_pPoczatek = nowyPracownik;
         m_nLiczbaPracownikow++;
@@ -51,7 +55,7 @@ void ListaPracownikow::Dodaj(const Pracownik& p)
         return;
     }
 
-    Pracownik* nowyPracownik = new Pracownik(p);
+    Pracownik* nowyPracownik = p.KopiaObiektu();
     nowyPracownik->m_pNastepny = obecny;
 
     if (poprzedni)
@@ -60,7 +64,6 @@ void ListaPracownikow::Dodaj(const Pracownik& p)
         m_pPoczatek = nowyPracownik;
 
     m_nLiczbaPracownikow++;
-
 }
 
 void ListaPracownikow::Usun(const Pracownik& wzorzec)
@@ -80,12 +83,14 @@ void ListaPracownikow::Usun(const Pracownik& wzorzec)
 
             delete obecny;
             m_nLiczbaPracownikow--;
+            std::cout << "Usunieto pracownika";
             return;
         }
 
         poprzedni = obecny;
         obecny = obecny->m_pNastepny;
     }
+    std::cout << "Nie znaleziono pracowinka";
 }
 
 void ListaPracownikow::WypiszPracownikow() const
@@ -94,7 +99,7 @@ void ListaPracownikow::WypiszPracownikow() const
 
     while (obecny)
     {
-        obecny->Wypisz();
+        obecny->WypiszDane();
         obecny = obecny->m_pNastepny;
         
     }
@@ -116,4 +121,57 @@ const Pracownik* ListaPracownikow::Szukaj(const char* nazwisko, const char* imie
 
     return nullptr;
 }
+
+void ListaPracownikow::ZapiszDoPliku(const char* nazwaPliku) const
+{
+
+    std::ofstream plik(nazwaPliku);
+
+    if (plik.is_open())
+    {
+        Pracownik* biezacy = m_pPoczatek;
+
+        while (biezacy != nullptr)
+        {
+            plik << *(biezacy) << std::endl;
+            biezacy = biezacy->m_pNastepny;
+        }
+
+        plik.close();
+        std::cout << "Zapisano do pliku: " << nazwaPliku << std::endl;
+    }
+    else
+    {
+        std::cerr << "B³¹d otwarcia pliku do zapisu." << std::endl;
+    }
+}
+
+void ListaPracownikow::OdczytZPliku(const char* nazwaPliku)
+{
+    std::ifstream plik(nazwaPliku);
+
+    if (plik.is_open())
+    {
+        std::string linia;
+        while (std::getline(plik, linia))
+        {
+            if (!linia.empty())
+            {
+                std::istringstream iss(linia);
+                Pracownik nowyPracownik;
+                if (iss >> nowyPracownik)
+                {
+                    Dodaj(nowyPracownik);
+                }
+            }
+        }
+        plik.close();
+        std::cout << "Odczytano z pliku: " << nazwaPliku << std::endl;
+    }
+    else
+    {
+        std::cerr << "B³¹d otwarcia pliku do odczytu." << std::endl;
+    }
+}
+
 
