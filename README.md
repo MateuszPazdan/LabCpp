@@ -11,5 +11,5 @@ This project is a console-based management system for employees and managers. Th
 ## Usage
 Before you begin, ensure you have C++ compiler installed
 ```
-$ git clone https://github.com/MateuszPazdan/GraphicsThreejsProject.git
+$ git clone https://github.com/MateuszPazdan/labCpp.git
 ```
